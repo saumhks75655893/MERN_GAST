@@ -145,3 +145,81 @@ Example:
 -   The JWT token should be stored securely on the client-side (e.g., in local storage or a cookie).
 -   The client should include the JWT token in the `Authorization` header of subsequent requests to protected endpoints.
 
+---
+
+# /users/profile Endpoint Documentation
+
+## Description
+
+This endpoint allows authenticated users to retrieve their profile information.
+
+## Request
+
+- **Method**: GET
+- **Headers**: 
+  - `Authorization`: Bearer token (JWT)
+
+## Response Codes
+
+- **200 OK**: Successfully retrieved user profile information.
+
+    ```json
+    {
+        "user": {
+            "_id": "userId",
+            "username": "username",
+            "email": "user@example.com",
+            "fullname": {
+                "firstname": "John",
+                "lastname": "Doe"
+            }
+        }
+    }
+    ```
+
+- **401 Unauthorized**: Missing or invalid JWT token.
+
+    ```json
+    {
+        "message": "Unauthorized access"
+    }
+    ```
+
+- **500 Internal Server Error**: The server encountered an unexpected condition that prevented it from fulfilling the request.
+
+---
+
+# /users/logout Endpoint Documentation
+
+## Description
+
+This endpoint allows authenticated users to log out by invalidating their session.
+
+## Request
+
+- **Method**: GET
+- **Headers**: 
+  - `Authorization`: Bearer token (JWT)
+
+## Response Codes
+
+- **200 OK**: Successfully logged out.
+
+    ```json
+    {
+        "message": "User logged out successfully"
+    }
+    ```
+
+- **401 Unauthorized**: Missing or invalid JWT token.
+
+    ```json
+    {
+        "message": "Unauthorized access"
+    }
+    ```
+
+- **500 Internal Server Error**: The server encountered an unexpected condition that prevented it from fulfilling the request.
+
+---
+

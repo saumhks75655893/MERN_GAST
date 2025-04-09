@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const userService = require("../services/user.service");
 const { validationResult } = require("express-validator");
+const blacklistTokenModel = require("../models/blacklistToken.model"); 
 
 // controller module for register user
 module.exports.registerUser = async (req, res, next) => {
@@ -26,7 +27,6 @@ module.exports.registerUser = async (req, res, next) => {
 };
 
 // controller module for login user
-
 module.exports.loginUser = async (req, res, next) => {
   // validating request body using express-validator
   const errors = validationResult(req);
@@ -48,9 +48,31 @@ module.exports.loginUser = async (req, res, next) => {
   if (!isMatch) {
     return res.status(401).json({ message: "Invalid email or password" });
   }
- 
+
   //generate token
   // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
   const token = user.generateAuthToken();
+
+  // set cookie
+  res.cookie("token", token);
+
+  // send the token and user
   res.status(200).json({ token, user });
+};
+
+// controller module for user profile
+module.exports.getUserProfile = async (req, res, next) => {
+  res.status(200).json(req.user);
+};
+
+// controller module for logout user
+module.exports.logoutUser = async (req, res, next) => {
+  // clearing the cookies 
+  res.clearCookie("token"); 
+  const token = req.cookies.token || req.headers.authorization.split(" ")[1];
+
+  await blacklistTokenModel.create({ token });
+
+  res.status(200).json({message : 'Logged out'}); 
+
 };
