@@ -223,3 +223,94 @@ This endpoint allows authenticated users to log out by invalidating their sessio
 
 ---
 
+# /captains/register Endpoint Documentation
+
+## Description
+
+This endpoint allows new captains to register on the platform. It requires specific captain and vehicle details, which are listed in the "Request Body" section below, to create a new account.
+
+## Request Body
+
+The request body should be in JSON format and contain the following fields:
+
+- `fullname` (object, Required):
+  - `firstname` (String, Required): The captain's first name (minimum 3 characters).
+  - `lastname` (String, Optional): The captain's last name (minimum 3 characters).
+- `email` (String, Required): The captain's email address. Must be a valid email format.
+- `password` (String, Required): The captain's password. Should meet the minimum password requirements (e.g., minimum 6 characters).
+- `vehicle` (object, Required):
+  - `color` (String, Required): The vehicle's color (minimum 3 characters).
+  - `plate` (String, Required): The vehicle's plate number (minimum 3 characters, must be unique).
+  - `capacity` (Number, Required): The vehicle's capacity (minimum 1).
+  - `vehicleType` (String, Required): The type of vehicle. Must be one of `car`, `bike`, or `bicycle`.
+
+Example:
+
+```json
+{
+    "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+    },
+    "email": "captain@example.com",
+    "password": "securePassword",
+    "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+    }
+}
+```
+
+## Response Codes
+
+- **201 Created**: Successfully created a new captain account.
+    ```json
+    {
+        "token": "jwtToken",
+        "captain": {
+            "_id": "captainId",
+            "fullname": {
+                "firstname": "John",
+                "lastname": "Doe"
+            },
+            "email": "captain@example.com",
+            "vehicle": {
+                "color": "Red",
+                "plate": "ABC123",
+                "capacity": 4,
+                "vehicleType": "car"
+            }
+        }
+    }
+    ```
+
+- **400 Bad Request**: The server could not understand the request due to invalid syntax or missing required fields.
+    ```json
+    {
+        "errors": [
+            {
+                "msg": "First name must be at least 3 characters long",
+                "param": "fullname.firstname",
+                "location": "body"
+            }
+        ]
+    }
+    ```
+
+- **409 Conflict**: The email or vehicle plate is already taken.
+    ```json
+    {
+        "message": "Captain already exists!"
+    }
+    ```
+
+- **500 Internal Server Error**: The server encountered an unexpected condition that prevented it from fulfilling the request.
+
+## Notes
+
+- Ensure that the password meets the application's security requirements.
+- Handle validation errors gracefully in the client application.
+- The JWT token should be stored securely on the client-side (e.g., in local storage or a cookie).
+

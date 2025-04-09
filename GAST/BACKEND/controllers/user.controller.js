@@ -5,15 +5,28 @@ const blacklistTokenModel = require("../models/blacklistToken.model");
 
 // controller module for register user
 module.exports.registerUser = async (req, res, next) => {
+
+  // validating request body using express-validator
   const errors = validationResult(req);
+
+  // check if there are any validation errors
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
+  // extracting data from request body
   const { fullname, email, password } = req.body;
 
+  // check if user already exists
+  const isUserAlreadyExists = await userModel.findOne({email}); 
+  if (isUserAlreadyExists) {
+    return res.status(400).json({ message: "User already exists!" });
+  }
+
+  // password hashing
   const hashedPassword = await userModel.hashPassword(password);
 
+  // creating a user object
   const user = await userService.createUser({
     firstname: fullname.firstname,
     lastname: fullname.lastname,
@@ -21,8 +34,10 @@ module.exports.registerUser = async (req, res, next) => {
     password: hashedPassword,
   });
 
+  // generating token for the user
   const token = user.generateAuthToken();
 
+  // setting cookie for the token
   res.status(201).json({ token, user });
 };
 
