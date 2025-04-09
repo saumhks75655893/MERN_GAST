@@ -20,11 +20,19 @@ router.post('/register', [
   body('vehicle.capacity').isNumeric().withMessage('Capacity must be a number'),
 
   body('vehicle.vehicleType').isIn(['car', 'bike', 'bicycle']).withMessage('Vehicle type must be either car, bike or bicycle'),
-  
+
 
 ], captainController.registerCaptain);
 
 
+// router creation for the login captain
+
+router.post('/login', [
+  body('email').isEmail().withMessage('Invalid email'),
+
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+
+], captainController.loginCaptain);
 
 
 

@@ -46,3 +46,36 @@ module.exports.registerCaptain = async (req, res, next) => {
   res.status(201).json({ token, captain });
 }
 
+// login captain controller
+module.exports.loginCaptain = async (req, res, next) => {
+  // validating request body using express-validator
+  const errors = validationResult(req);
+
+  // check if there are any validation errors
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  // extracting data from request body
+  const { email, password } = req.body;
+
+  // finding captain by email
+  const captain = await captainModel.findOne({ email });
+
+  // checking if captain exists or not
+  if (!captain) {
+    return res.status(400).json({ message: "Invalid credentials!" });
+  }
+
+  // checking if password is correct or not
+  const isPasswordCorrect = await captainModel.comparePassword(password, captain.password);
+  if (!isPasswordCorrect) {
+    return res.status(400).json({ message: "Invalid credentials!" });
+  }
+
+  // generating token for the captain
+  const token = captain.generateAuthToken();
+
+  // setting cookie for the token
+  res.status(200).json({ token, captain });
+}
