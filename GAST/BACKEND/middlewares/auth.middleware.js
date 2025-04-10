@@ -2,11 +2,10 @@ const userModel = require("../models/user.model");
 const captainModel = require("../models/captain.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const middlewareBlackListModel = require("../models/blacklistToken.model"); 
 
 // middleware for user authentication
-module.exports.authUser = async (req, res, next) => 
-  {
+module.exports.authUser = async (req, res, next) => {
   const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
   // if token not found
@@ -14,11 +13,11 @@ module.exports.authUser = async (req, res, next) =>
     return res.status(401).json({ message: "unauthorized" });
   }
 
-  // if the found token is blackListed 
-  const isBlacklisted = await userModel.findOne({token: token});
-  if(isBlacklisted){
-    return res.status(401).json({message : 'unauthorized'}); 
-  } 
+  // if the found token is blackListed
+  const isBlacklisted = await middlewareBlackListModel.findOne({ token: token });
+  if (isBlacklisted) {
+    return res.status(401).json({ message: "unauthorized" });
+  }
   // if token found
   try {
     // verify the token
@@ -31,30 +30,30 @@ module.exports.authUser = async (req, res, next) =>
     // if user found
     req.user = user;
 
-    return next(); 
-
+    return next();
   } catch (err) {
     // if any error occured during the token verification
     return res.status(401).json({ message: "unauthorized" });
   }
 };
 
-
 // middleware for captain authorization
-
 module.exports.authCaptain = async (req, res, next) => {
-  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.token || req.headers['authorization']?.split(" ")[1];
+
 
   // if token not found
   if (!token) {
     return res.status(401).json({ message: "unauthorized" });
   }
 
-  // if the found token is blackListed 
-  const isBlacklisted = await captainModel.findOne({token: token});
-  if(isBlacklisted){
-    return res.status(401).json({message : 'unauthorized'}); 
-  } 
+  // if the found token is blackListed
+  const isBlacklisted = await middlewareBlackListModel.findOne({ token: token });
+  console.log(isBlacklisted); 
+
+  if (isBlacklisted) {
+    return res.status(401).json({ message: "unauthorized" });
+  }
 
   // if token found
   try {
@@ -67,9 +66,9 @@ module.exports.authCaptain = async (req, res, next) => {
     }
     // if captain found
     req.captain = captain;
-    return next(); 
+    return next();
   } catch (err) {
     // if any error occured during the token verification
     return res.status(401).json({ message: "unauthorized" });
   }
-}
+};

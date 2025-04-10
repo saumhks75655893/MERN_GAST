@@ -314,3 +314,143 @@ Example:
 - Handle validation errors gracefully in the client application.
 - The JWT token should be stored securely on the client-side (e.g., in local storage or a cookie).
 
+---
+
+# /captains/login Endpoint Documentation
+
+## Description
+
+This endpoint allows registered captains to log in to the platform. It verifies the captain's credentials and returns a JWT token for authentication.
+
+## Request Body
+
+The request body should be in JSON format and contain the following fields:
+
+- `email`: (String, Required) The captain's email address.
+- `password`: (String, Required) The captain's password.
+
+Example:
+
+```json
+{
+    "email": "captain@example.com",
+    "password": "securePassword"
+}
+```
+
+## Response Codes
+
+- **200 OK**: Successfully logged in.
+    ```json
+    {
+        "token": "jwtToken",
+        "captain": {
+            "_id": "captainId",
+            "fullname": {
+                "firstname": "John",
+                "lastname": "Doe"
+            },
+            "email": "captain@example.com",
+            "vehicle": {
+                "color": "Red",
+                "plate": "ABC123",
+                "capacity": 4,
+                "vehicleType": "car"
+            }
+        }
+    }
+    ```
+
+- **400 Bad Request**: Invalid credentials or validation errors.
+    ```json
+    {
+        "message": "Invalid credentials!"
+    }
+    ```
+
+- **500 Internal Server Error**: The server encountered an unexpected condition.
+
+---
+
+# /captains/profile Endpoint Documentation
+
+## Description
+
+This endpoint allows authenticated captains to retrieve their profile information.
+
+## Request
+
+- **Method**: GET
+- **Headers**: 
+  - `Authorization`: Bearer token (JWT)
+
+## Response Codes
+
+- **200 OK**: Successfully retrieved captain profile.
+    ```json
+    {
+        "captain": {
+            "_id": "captainId",
+            "fullname": {
+                "firstname": "John",
+                "lastname": "Doe"
+            },
+            "email": "captain@example.com",
+            "vehicle": {
+                "color": "Red",
+                "plate": "ABC123",
+                "capacity": 4,
+                "vehicleType": "car"
+            },
+            "status": "inactive",
+            "location": {
+                "lat": 0,
+                "lng": 0
+            }
+        }
+    }
+    ```
+
+- **401 Unauthorized**: Missing or invalid JWT token.
+    ```json
+    {
+        "message": "Unauthorized access"
+    }
+    ```
+
+---
+
+# /captains/logout Endpoint Documentation
+
+## Description
+
+This endpoint allows authenticated captains to log out by invalidating their session token.
+
+## Request
+
+- **Method**: GET
+- **Headers**: 
+  - `Authorization`: Bearer token (JWT)
+
+## Response Codes
+
+- **200 OK**: Successfully logged out.
+    ```json
+    {
+        "message": "Successfully logged out"
+    }
+    ```
+
+- **401 Unauthorized**: Missing or invalid JWT token.
+    ```json
+    {
+        "message": "Unauthorized access"
+    }
+    ```
+
+## Notes
+
+- The JWT token must be included in the Authorization header as a Bearer token
+- Token will be blacklisted upon logout
+- All subsequent requests with the blacklisted token will be rejected
+

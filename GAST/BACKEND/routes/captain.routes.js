@@ -2,6 +2,7 @@ const captainController = require('../controllers/captain.controller');
 const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
+const authMiddleware = require("../middlewares/auth.middleware"); 
 
 // router creation for the register captain
 router.post('/register', [
@@ -34,6 +35,12 @@ router.post('/login', [
 
 ], captainController.loginCaptain);
 
+// router creation for the captain profile
 
+router.get('/profile',authMiddleware.authCaptain, captainController.getCaptainProfile)
+
+
+// router creation for the logout of the captain
+router.get('/logout',authMiddleware.authCaptain, captainController.logoutCaptain) 
 
 module.exports = router;
