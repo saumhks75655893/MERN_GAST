@@ -1,56 +1,100 @@
-# React + Vite
+# GAST - GOODS AND SERVICE TRANSPORTATION
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+GAST is a ride-sharing platform that connects users with fleet captains. This application uses React with Vite for the frontend and includes authentication for both users and captains.
 
-Currently, two official plugins are available:
+## Project Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn package manager
+- Web browser (Chrome recommended)
 
-## Expanding the ESLint configuration
+### Getting Started
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Start the development server with `npm run dev`
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Authentication System
 
-## Authentication Endpoints
+### For Users 🚗
 
-### User Authentication
+#### 1. User Registration (`/usersignup`)
+Create a new user account:
+```json
+POST /usersignup
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "securepassword123"
+}
+```
+- All fields are required
+- Password must be at least 8 characters
+- Email must be valid format
 
-#### User Login
-- **Path:** `/userlogin`
-- **Method:** POST
-- **Description:** Authenticates regular users
-- **Fields:**
-  - email (required)
-  - password (required)
+#### 2. User Login (`/userlogin`)
+Login with existing account:
+```json
+POST /userlogin
+{
+  "email": "john@example.com",
+  "password": "securepassword123"
+}
+```
+- Returns JWT token for authentication
+- Token must be included in subsequent requests
 
-#### User Registration
-- **Path:** `/usersignup` 
-- **Method:** POST
-- **Description:** Register new users
-- **Fields:**
-  - firstName (required)
-  - lastName (required)
-  - email (required)
-  - password (required)
+### For Captains 🚘
 
-### Captain Authentication
+#### 1. Captain Registration (`/captainsignup`)
+Register as a fleet captain:
+```json
+POST /captainsignup
+{
+  "firstName": "Captain",
+  "lastName": "Smith",
+  "email": "captain@example.com",
+  "password": "securepassword123"
+}
+```
+- Requires valid email and strong password
+- Additional verification may be required
+- Profile completion needed after registration
 
-#### Captain Login
-- **Path:** `/captainlogin`
-- **Method:** POST
-- **Description:** Authenticates fleet captains
-- **Fields:**
-  - email (required)
-  - password (required)
+#### 2. Captain Login (`/captainlogin`)
+Captain authentication:
+```json
+POST /captainlogin
+{
+  "email": "captain@example.com",
+  "password": "securepassword123"
+}
+```
+- Provides access to captain-specific features
+- Returns JWT token for session management
 
-#### Captain Registration
-- **Path:** `/captainsignup`
-- **Method:** POST
-- **Description:** Register new fleet captains
-- **Fields:**
-  - firstName (required)
-  - lastName (required)
-  - email (required)
-  - password (required)
+## Security Notes 🔒
+- All passwords are securely hashed
+- JWT tokens expire after 24 hours
+- HTTPS encryption used for all requests
+- Rate limiting applied to prevent abuse
 
-**Note:** All authentication endpoints return a JWT token upon successful authentication.
+## Common Issues & Solutions
+1. **Login Fails**: 
+   - Check email/password spelling
+   - Ensure account is verified
+   - Clear browser cache if needed
+
+2. **Registration Issues**:
+   - Email must be unique
+   - Password requirements must be met
+   - All fields are mandatory
+
+## Need Help? 
+- Check our [FAQ section](#)
+- Contact support: support@gast.com
+- Join our Discord community
+
+**Note:** Remember to never share your JWT tokens or passwords. The system will never ask for your password via email.
