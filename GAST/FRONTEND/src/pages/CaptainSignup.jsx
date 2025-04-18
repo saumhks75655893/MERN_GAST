@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import logo from "../../logo/captainlogo.png";
+import { useContext } from "react";
+import { CaptainDataContext } from "../context/CaptainContext";
 
 const CaptainSignup = () => {
   //for two way binding of input field
@@ -10,6 +12,8 @@ const CaptainSignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState({});
+
+  const { captain, setCaptain } = useContext(CaptainDataContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,7 +34,6 @@ const CaptainSignup = () => {
     setEmail("");
     setPassword("");
   };
-
 
   return (
     <div
@@ -63,7 +66,9 @@ const CaptainSignup = () => {
             />
           </div>
           {/* email input */}
-          <h3 className="text-lg mb-2 font-semibold">What's Your Captain Email </h3>
+          <h3 className="text-lg mb-2 font-semibold">
+            What's Your Captain Email{" "}
+          </h3>
           <input
             className="bg-[#eeeeee] rounded px-4 py-2 w-full text-lg placeholder:text-base mb-6"
             type="email"

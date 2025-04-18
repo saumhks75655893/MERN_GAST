@@ -1,4 +1,4 @@
-# GAST - GOODS AND SERVICE TRANSPORTATION
+# GAST - GOODS AND SERVICE TRANSPORTATION   
 
 ## Overview
 GAST is a ride-sharing platform that connects users with fleet captains. This application uses React with Vite for the frontend and includes authentication for both users and captains.

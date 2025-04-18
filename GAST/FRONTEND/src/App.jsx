@@ -1,18 +1,20 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
+import Start from "./pages/Start";
 import Userlogin from "./pages/Userlogin";
 import Usersignup from "./pages/Usersignup";
 import CaptainLogin from "./pages/CaptainLogin";
 import CaptainSignup from "./pages/CaptainSignup";
-
+import Home from "./pages/Home";
+import UserProtecteWrapper from "./pages/UserProtecteWrapper";
+import UserLogout from "./pages/userLogout";
 
 const App = () => {
   return (
     <div>
       <Routes>
-        {/* router path for Home */}
-        <Route path="/" element={<Home />} />
+        {/* router path for start */}
+        <Route path="/" element={<Start />} />
 
         {/* router path for Userlogin */}
         <Route path="/userlogin" element={<Userlogin />} />
@@ -25,6 +27,22 @@ const App = () => {
 
         {/* router path for CaptainSignup */}
         <Route path="/captainsignup" element={<CaptainSignup />} />
+
+        {/* router path for Home */}
+        <Route
+          path="/home"
+          element={UserProtecteWrapper({ children: <Home /> })}
+        />
+
+        {/* router path for logout user */}
+        <Route
+          path="user/userlogout"
+          element={
+            <UserProtecteWrapper>
+              <UserLogout />
+            </UserProtecteWrapper>
+          }
+        />
       </Routes>
     </div>
   );

@@ -1,24 +1,45 @@
-import React, { useState } from "react";
+import React, {  useContext } from "react";
 import logo from "../../logo/logo1.png";
 import { Link } from "react-router-dom";
+import { UserDataContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Userlogin = () => {
   //for two way binding of input field
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [userData, setUserDataSet] = useState({});
+
+  // fetch data from the database
+  const { setUser } = useContext(UserDataContext);
+
+  //for navigation
+  const navigate = useNavigate();
 
   //for form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform login logic here, such as calling an API or updating state
 
-    setUserDataSet({
+    // Perform login logic here, such as calling an API or updating state
+    const userData = {
       email: email,
       password: password,
-    });
+    };
 
-    console.log("userData", userData);
+    // send data to the server
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/users/login`,
+      userData
+    );
+
+    //login success
+    if (response.status === 200) {
+      const data = response.data;
+
+      setUser(data.user); // set user data in context
+      localStorage.setItem("token", data.token); // store user data in local storage
+      navigate("/home"); // redirect to dashboard after login
+    }
 
     setEmail("");
     setPassword("");
@@ -26,7 +47,10 @@ const Userlogin = () => {
 
   //returning the JSX
   return (
-    <div className="p-7 flex flex-col justify-between h-screen font-semibold" style={{backgroundColor: "#bee9e8"}}>
+    <div
+      className="p-7 flex flex-col justify-between h-screen font-semibold"
+      style={{ backgroundColor: "#bee9e8" }}
+    >
       {/* user login */}
       <div className="mb-4">
         <img src={logo} alt="logo" className="w-1/4 mb-2" />
@@ -62,7 +86,7 @@ const Userlogin = () => {
         <p className="font-bold text-center">
           New here?
           <Link to={"/usersignup"} className="text-[#4361ee] ">
-             Creat New Account{" "}
+            Creat New Account{" "}
           </Link>
         </p>
       </div>

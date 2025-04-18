@@ -1,28 +1,46 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
 import logo from "../../logo/logo1.png";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
 
 const Usersignup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const { setUser } = useContext(UserDataContext);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    setUserData({
-      fullname: {
-        firstname : firstName, 
-        lastname: lastName
-      }, 
-      email: email,
-      password : password
-    });
 
-    console.log("userData", userData);
+    const newUser = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
+      email: email,
+      password: password,
+    };
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/users/register`,
+      newUser
+    );
+
+    if (response.status === 201) {
+      const data = response.data
+
+      setUser(data.user); 
+      localStorage.setItem("token", data.token); // store user data in local storage
+
+
+      navigate('/home'); 
+    }
 
     setFirstName("");
     setLastName("");
@@ -31,7 +49,6 @@ const Usersignup = () => {
   };
 
   return (
-
     <div
       className="p-7 flex flex-col justify-between h-screen font-semibold"
       style={{ backgroundColor: "#bee9e8" }}
@@ -44,22 +61,22 @@ const Usersignup = () => {
           {/* user name */}
           <h3 className="text-lg mb-2 font-semibold">What's Your Name </h3>
           <div className="flex gap-4 mb-6">
-          <input
-            className="bg-[#eeeeee] rounded px-4 py-2 w-1/2 text-lg placeholder:text-base"
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First name"
-            required
-          />
-           <input
-            className="bg-[#eeeeee] rounded px-4 py-2 w-1/2  text-lg placeholder:text-base"
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last name  "
-            required
-          />
+            <input
+              className="bg-[#eeeeee] rounded px-4 py-2 w-1/2 text-lg placeholder:text-base"
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First name"
+              required
+            />
+            <input
+              className="bg-[#eeeeee] rounded px-4 py-2 w-1/2  text-lg placeholder:text-base"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last name  "
+              required
+            />
           </div>
           {/* email input */}
           <h3 className="text-lg mb-2 font-semibold">What's Your Email </h3>
@@ -100,7 +117,11 @@ const Usersignup = () => {
 
       {/*Captain sign in */}
       <div className="font-bold">
-        <p className="text-[10px] leading-tight">By proceeding, you consent to get calls, Whatsapp or SMS messages, including by automated means, from GAST and its affilitates to the email provided.</p>
+        <p className="text-[10px] leading-tight">
+          By proceeding, you consent to get calls, Whatsapp or SMS messages,
+          including by automated means, from GAST and its affilitates to the
+          email provided.
+        </p>
       </div>
     </div>
   );
