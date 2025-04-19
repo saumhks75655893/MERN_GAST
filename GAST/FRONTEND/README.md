@@ -98,3 +98,178 @@ POST /captainlogin
 - Join our Discord community
 
 **Note:** Remember to never share your JWT tokens or passwords. The system will never ask for your password via email.
+
+
+### User Endpoints
+
+#### 1. User Registration
+```http
+POST /users/register
+Content-Type: application/json
+
+{
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "password": "string"
+}
+```
+**Response (201):**
+```json
+{
+  "user": {
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string"
+  },
+  "token": "JWT_TOKEN"
+}
+```
+
+#### 2. User Login
+```http
+POST /userlogin
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "string"
+}
+```
+**Response (200):**
+```json
+{
+  "user": {
+    "email": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    }
+  },
+  "token": "JWT_TOKEN"
+}
+```
+
+#### 3. User Logout
+```http
+GET /user/userlogout
+Authorization: Bearer JWT_TOKEN
+```
+**Response (200):**
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Captain Endpoints
+
+#### 1. Captain Registration
+```http
+POST /captains/register
+Content-Type: application/json
+
+{
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "password": "string",
+  "vehicle": {
+    "color": "string",
+    "plate": "string",
+    "capacity": "number",
+    "vehicleType": "string"
+  }
+}
+```
+**Response (201):**
+```json
+{
+  "captain": {
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "vehicle": {
+      "color": "string",
+      "plate": "string",
+      "capacity": "number",
+      "vehicleType": "string"
+    }
+  },
+  "token": "JWT_TOKEN"
+}
+```
+
+#### 2. Captain Login
+```http
+POST /captainlogin
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "string"
+}
+```
+**Response (200):**
+```json
+{
+  "captain": {
+    "email": "string",
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    }
+  },
+  "token": "JWT_TOKEN"
+}
+```
+
+#### 3. Captain Logout
+```http
+GET /captain/captainlogout
+Authorization: Bearer JWT_TOKEN
+```
+**Response (200):**
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Protection Wrappers
+
+#### UserProtectWrapper
+- **Purpose**: Protects user-specific routes
+- **Behavior**: 
+  - Checks for valid user JWT token in localStorage
+  - Redirects to /userlogin if no valid token found
+  - Allows access to protected routes only with valid token
+
+#### CaptainProtectWrapper
+- **Purpose**: Protects captain-specific routes
+- **Behavior**: 
+  - Checks for valid captain JWT token in localStorage
+  - Redirects to /captainlogin if no valid token found
+  - Allows access to protected routes only with valid token
+
+### Error Responses
+```json
+{
+  "error": "Error message description",
+  "status": 400/401/403/404/500
+}
+```
+
+### Authentication Headers
+For protected routes, include the JWT token in the Authorization header:
+```http
+Authorization: Bearer <JWT_TOKEN>
+```
