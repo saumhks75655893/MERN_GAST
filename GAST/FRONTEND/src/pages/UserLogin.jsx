@@ -37,7 +37,7 @@ const Userlogin = () => {
       const data = response.data;
 
       setUser(data.user); // set user data in context
-      localStorage.setItem("token", data.token); // store user data in local storage
+      localStorage.setItem("userToken", data.token); // store user data in local storage
       navigate("/home"); // redirect to dashboard after login
     }
 
