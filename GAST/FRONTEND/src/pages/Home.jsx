@@ -190,7 +190,7 @@ const Home = () => {
         ref={vehicleFoundRef}
         className="fixed w-full translate-y-full  z-10 bg-white px-3 py-2 bottom-0"
       >
-        <LookingForDriver setVehicleFound={setVehicleFound} />
+        <LookingForDriver setVehicleFound={setVehicleFound}   setConfirmedVehiclePanel={setConfirmedVehiclePanel} />
       </div>
 
       {/* for the driver confirmation for the ride*/}

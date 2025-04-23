@@ -1,26 +1,33 @@
 import React from "react";
 
-const LookingForDriver = (props) => {
+const RidePopUp = (props) => {
   return (
     <div>
+      {/* pop-out the window */}
       <h5
         onClick={() => {
-          // props.setvehiclePanel(true);
-          props.setConfirmedVehiclePanel(true);
-          // props.setPanelOpen(false);
-          props.setVehicleFound(false)
+          props.setRidePopPanel(false);
         }}
         className="text-center p-2 text-gray-200 text-3xl"
       >
         <i className="ri-arrow-down-wide-fill"></i>
       </h5>
-      <h3 className="text-2xl font-bold -mb-5"> Looking for a Driver </h3>
+
+      {/* Info about the new ride */}
+      <h3 className="text-2xl font-bold mb-4"> New Ride Available! </h3>
+
+      {/* info about the captain and the amount and the distance */}
+      <div className="px-3 py-1 bg-yellow-400 rounded-lg flex justify-between items-center">
+        <div className="flex items-center justify-center gap-2">
+          <img
+            className="h-25 border-gray-100 rounded-full p-4"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQqsaBK2hz-19t1HQnwjqPxgADLONZdFH3fg&s"
+          ></img>
+          <h2 className="text-xl font-semibold">Rina Kumari</h2>
+        </div>
+        <h4 className="text-xl font-bold -mt-1 -mb-1">2.2 KM</h4>
+      </div>
       <div className="flex flex-col gap-2 justify-between items-center mt-5">
-        {/* vehicle image */}
-        <img
-          className="h-40"
-          src="https://www.pngplay.com/wp-content/uploads/8/Uber-PNG-Photos.png"
-        ></img>
         {/* location for the ride */}
         <div className="w-full my-3 px-4 shadow py-2">
           <div className="flex items-center gap-5">
@@ -56,9 +63,32 @@ const LookingForDriver = (props) => {
             </div>
           </div>
         </div>
+
+        <div className="flex flex-row-reverse w-full items-center gap-6">
+          {/* button for confirm the ride */}
+          <button
+            onClick={() => {
+              props.setRidePopPanel(false);
+              props.setConfirmRidePopPanel(true);
+            }}
+            className="shadow w-1/2 text-white border-green-500 bg-green-500 text-xl font-bold p-3 rounded-lg mb-1"
+          >
+            Accept
+          </button>
+
+          {/* button for cancle the ride */}
+          <button
+            onClick={() => {
+              props.setRidePopPanel(false);
+            }}
+            className="shadow w-1/2 text-gray-600 border-gray-700 bg-gray-300 text-xl font-bold p-3 rounded-lg"
+          >
+            Ignore
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default LookingForDriver;
+export default RidePopUp;
