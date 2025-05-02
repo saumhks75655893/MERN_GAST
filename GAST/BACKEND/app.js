@@ -6,6 +6,7 @@ const app = express();
 const userRoutes = require('./routes/user.routes'); 
 const captainRoutes = require('./routes/captain.routes');
 const cookieParser = require('cookie-parser');
+const mapRoutes = require('./routes/maps.routes'); 
 
 //mongodb database connection 
 const connectToDb = require('./db/db'); 
@@ -27,6 +28,8 @@ app.use('/users', userRoutes);
 
 // /captains route for captain management
 app.use('/captains', captainRoutes);
+
+app.use('/maps', mapRoutes); 
 
 
 
