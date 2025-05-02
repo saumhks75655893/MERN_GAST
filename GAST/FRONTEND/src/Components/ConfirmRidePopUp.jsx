@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ConfirmRidePopUp = (props) => {
+
+  const [Otp, setOtp] = useState(''); 
+  const submitHandler = (e) => {
+    e.prevenDefault()
+
+  }
   return (
     <div className="">
       {/* pop-out the window */}
@@ -70,10 +76,12 @@ const ConfirmRidePopUp = (props) => {
         <div className="w-full mt-6">
           <form
             onSubmit={(e) => {
-              // submitHander(e);
+              submitHandler(e);
             }}
           >
             <input
+            value={Otp}
+            onChange={(e) => setOtp(e.target.value)}
               type="text"
               className="bg-[#eee] px-6 font-mono py-4 w-full text-lg rounded-lg mb-6"
               placeholder="Enter Otp"
