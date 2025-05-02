@@ -10,4 +10,16 @@ router.get('/get-coordinates',
     mapController.getCoordinates
 );
 
+router.get('/get-distance-time', 
+    query('origin').isString().isLength({min:3}), 
+    query('destination').isString().isLength({min: 3}), 
+    authMiddleware.authUser, 
+    mapController.getDistanceTime
+)
+
+router.get('/get-suggestion',
+    query('input').isString().notEmpty().withMessage('Input is required'),  
+    authMiddleware.authUser, 
+    mapController.getAutoCompleteSuggestion
+)
 module.exports = router;
