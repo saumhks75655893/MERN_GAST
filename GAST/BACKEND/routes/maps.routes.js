@@ -18,7 +18,7 @@ router.get('/get-distance-time',
 )
 
 router.get('/get-suggestion',
-    query('input').isString().notEmpty().withMessage('Input is required'),  
+    query('input').isString().isLength({min:3}), 
     authMiddleware.authUser, 
     mapController.getAutoCompleteSuggestion
 )
