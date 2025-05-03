@@ -1,4 +1,4 @@
-import React, {use, useRef, useState } from "react";
+import React, { use, useContext, useEffect, useRef, useState } from "react";
 import logo from "../../logo/logo1.png";
 import { Link } from "react-router-dom";
 import CaptainDetails from "../Components/CaptainDetails";
@@ -6,14 +6,25 @@ import ConfirmRidePopUp from "../Components/ConfirmRidePopUp";
 import RidePopUp from "../Components/RidePopUp";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { SocketContext } from "../context/SocketContext";
+import { CaptainDataContext } from "../context/CaptainContext";
 
 const CaptainHome = () => {
   const [ridePopPanel, setRidePopPanel] = useState(true);
   const ridePopPanelRef = useRef(null);
-  const [ConfirmRidePopPanel,setConfirmRidePopPanel] = useState(false); 
-  const ConfirmRidePopPanelRef = useRef(null); 
+  const [ConfirmRidePopPanel, setConfirmRidePopPanel] = useState(false);
+  const ConfirmRidePopPanelRef = useRef(null);
+  const { sendMessage, receiveMessage } = useContext(SocketContext);
+  const { captain } = useContext(CaptainDataContext);
 
-  // for ignore 
+  useEffect(() => {
+    if (!captain || !captain._id) return;
+    // console.log(user);
+    sendMessage("join", { userType: "captain", userId: captain._id });
+    console.log(captain._id);
+  }, [captain]);
+
+  // for ignore
   useGSAP(() => {
     if (ridePopPanel) {
       gsap.to(ridePopPanelRef.current, {
@@ -67,13 +78,25 @@ const CaptainHome = () => {
       </div>
 
       {/* pop window for captain requested rides */}
-      <div ref={ridePopPanelRef} className="fixed w-full z-10 translate-y-full bg-white px-3 py-2 bottom-0">
-        <RidePopUp setRidePopPanel={setRidePopPanel} setConfirmRidePopPanel={setConfirmRidePopPanel}/>
+      <div
+        ref={ridePopPanelRef}
+        className="fixed w-full z-10 translate-y-full bg-white px-3 py-2 bottom-0"
+      >
+        <RidePopUp
+          setRidePopPanel={setRidePopPanel}
+          setConfirmRidePopPanel={setConfirmRidePopPanel}
+        />
       </div>
 
       {/* pop window for captain to confirm the  rides */}
-      <div ref={ConfirmRidePopPanelRef} className="fixed w-full h-screen z-10 translate-y-full bg-white px-3 py-2 bottom-0">
-        <ConfirmRidePopUp setRidePopPanel={setRidePopPanel} setConfirmRidePopPanel={setConfirmRidePopPanel}/>
+      <div
+        ref={ConfirmRidePopPanelRef}
+        className="fixed w-full h-screen z-10 translate-y-full bg-white px-3 py-2 bottom-0"
+      >
+        <ConfirmRidePopUp
+          setRidePopPanel={setRidePopPanel}
+          setConfirmRidePopPanel={setConfirmRidePopPanel}
+        />
       </div>
     </div>
   );

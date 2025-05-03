@@ -454,3 +454,294 @@ This endpoint allows authenticated captains to log out by invalidating their ses
 - Token will be blacklisted upon logout
 - All subsequent requests with the blacklisted token will be rejected
 
+# Maps API Endpoints Documentation
+
+## 1. Get Coordinates Endpoint
+
+### Description
+Converts an address into geographical coordinates (latitude and longitude).
+
+### Route
+```
+GET /maps/get-coordinates
+```
+
+### Headers
+- `Authorization`: Bearer token (JWT)
+
+### Query Parameters
+- `address` (string, required): The address to geocode (minimum 3 characters)
+
+### Response
+```json
+{
+    "lat": number,
+    "lng": number
+}
+```
+
+### Status Codes
+- **200**: Successfully retrieved coordinates
+- **400**: Invalid address format or missing address
+- **401**: Unauthorized access
+- **500**: Server error
+
+## 2. Get Distance and Time Endpoint
+
+### Description
+Calculates the distance and duration between two locations.
+
+### Route
+```
+GET /maps/get-distance-time
+```
+
+### Headers
+- `Authorization`: Bearer token (JWT)
+
+### Query Parameters
+- `origin` (string, required): Starting location (minimum 3 characters)
+- `destination` (string, required): Ending location (minimum 3 characters)
+
+### Response
+```json
+{
+    "distance": {
+        "text": "string",
+        "value": number
+    },
+    "duration": {
+        "text": "string",
+        "value": number
+    }
+}
+```
+
+### Status Codes
+- **200**: Successfully retrieved distance and time
+- **400**: Invalid parameters
+- **401**: Unauthorized access
+- **500**: Server error
+
+## 3. Get Location Suggestions Endpoint
+
+### Description
+Provides autocomplete suggestions for location search.
+
+### Route
+```
+GET /maps/get-suggestion
+```
+
+### Headers
+- `Authorization`: Bearer token (JWT)
+
+### Query Parameters
+- `input` (string, required): Search text for location (minimum 3 characters)
+
+### Response
+```json
+{
+    "suggestions": [
+        {
+            "place_id": "string",
+            "description": "string",
+            "structured_formatting": {
+                "main_text": "string",
+                "secondary_text": "string"
+            }
+        }
+    ]
+}
+```
+
+### Status Codes
+- **200**: Successfully retrieved suggestions
+- **400**: Invalid input
+- **401**: Unauthorized access
+- **500**: Server error
+
+## Implementation Notes
+
+### Services (maps.service.js)
+- Uses Google Maps Geocoding API for coordinate conversion
+- Uses Google Maps Distance Matrix API for distance/time calculations
+- Uses Google Maps Places Autocomplete API for location suggestions
+- Requires valid Google Maps API key in environment variables
+
+### Security
+- All endpoints require JWT authentication
+- Input validation implemented using express-validator
+- API key protected through environment variables
+
+### Error Handling
+- Comprehensive error handling for API responses
+- Validation errors returned with appropriate status codes
+- Detailed error messages in development environment
+
+### Rate Limiting
+- Subject to Google Maps API usage limits
+- Implement appropriate caching strategies for production use
+
+### Environment Variables Required
+```
+GOOGLE_MAPS_API=your_google_maps_api_key
+```
+
+// ...existing code...
+
+# Rides API Endpoints Documentation
+
+## 1. Create Ride Endpoint
+
+### Description
+Creates a new ride request with pickup and destination locations.
+
+### Route
+```
+POST /rides/create
+```
+
+### Headers
+- `Authorization`: Bearer token (JWT)
+
+### Request Body
+```json
+{
+    "pickup": "123 Start Street, City",
+    "destination": "456 End Avenue, City",
+    "vehicleType": "car"  // Options: "car", "bike", "bicycle"
+}
+```
+
+### Response
+```json
+{
+    "_id": "rideId",
+    "user": "userId",
+    "pickup": "123 Start Street, City",
+    "destination": "456 End Avenue, City",
+    "fare": 150.50,
+    "status": "Pending",
+    "otp": "123456"
+}
+```
+
+### Status Codes
+- **201**: Ride created successfully
+- **400**: Invalid input parameters
+- **401**: Unauthorized access
+- **500**: Server error
+
+### 2. Get Fare Estimate Endpoint
+
+### Description
+Calculates the estimated fare for a ride based on distance and vehicle type.
+
+### Route
+```
+GET /rides/get-fair
+```
+
+### Headers
+- `Authorization`: Bearer token (JWT)
+
+### Query Parameters
+- `pickup` (string, required): Pickup location address (minimum 3 characters)
+- `destination` (string, required): Destination location address (minimum 3 characters)
+
+### Response
+```json
+{
+  "car": 250.75,
+  "bike": 150.25,
+  "bicycle": 75.50
+}
+```
+
+### Fare Calculation Formula
+```javascript
+fare = baseFare + (distanceInKm * perKmRate) + (timeInMinutes * perMinuteRate)
+
+Where:
+- car:     baseFare = 50, perKmRate = 10, perMinuteRate = 2
+- bike:    baseFare = 30, perKmRate = 5,  perMinuteRate = 1
+- bicycle: baseFare = 10, perKmRate = 2,  perMinuteRate = 0.5
+```
+
+### Status Codes
+- **200**: Fare calculated successfully
+- **400**: Invalid parameters
+- **401**: Unauthorized access
+- **500**: Server error
+
+### Status Codes
+- **200**: Fare calculated successfully
+- **400**: Invalid parameters
+- **401**: Unauthorized access
+- **500**: Server error
+
+## Implementation Details
+
+### Ride Model Schema
+```javascript
+{
+    user: ObjectId,          // Reference to User model
+    captain: ObjectId,       // Reference to Captain model
+    pickup: String,          // Pickup location
+    destination: String,     // Destination location
+    fare: Number,           // Calculated fare
+    status: String,         // ["Pending", "Confirmed", "Ongoing", "Canceled", "Completed"]
+    duration: Number,       // Trip duration in seconds
+    distance: Number,       // Trip distance in meters
+    paymentId: String,     // Payment reference
+    orderId: String,       // Order reference
+    signature: String,     // Payment signature
+    otp: String           // 6-digit verification code
+}
+```
+
+### Security Features
+- JWT authentication required for all endpoints
+- Input validation using express-validator
+- OTP generation for ride verification
+- Payment integration support
+
+### Error Handling
+- Comprehensive validation for all input parameters
+- Detailed error messages for debugging
+- Proper HTTP status codes for different scenarios
+
+### Example Usage
+
+#### Creating a New Ride
+```javascript
+const response = await axios.post('/rides/create', {
+    pickup: "Central Park, New York",
+    destination: "Times Square, New York",
+    vehicleType: "car"
+}, {
+    headers: {
+        Authorization: `Bearer ${userToken}`
+    }
+});
+```
+
+#### Getting Fare Estimate
+```javascript
+const response = await axios.get('/rides/get-fair', {
+    params: {
+        pickup: "Central Park, New York",
+        destination: "Times Square, New York"
+    },
+    headers: {
+        Authorization: `Bearer ${userToken}`
+    }
+});
+```
+
+### Notes
+- All distances are calculated using Google Maps API
+- Fare estimates may vary based on traffic conditions
+- OTP is required for ride verification
+- Real-time tracking available for ongoing rides

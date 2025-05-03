@@ -17,3 +17,19 @@ module.exports.createRide = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+module.exports.getFair = async (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { pickup, destination } = req.query;
+
+  try{
+    const fair = await rideService.getFair(pickup, destination);
+    return res.status(200).json(fair);
+  }catch(error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}

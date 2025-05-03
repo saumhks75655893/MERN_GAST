@@ -28,28 +28,29 @@ async function getFair(pickup, destination) {
     bicycle: 0.5,
   };
 
-  console.log(distanceAndTime);
+  // console.log(distanceAndTime);
   const distanceValue = distanceAndTime.distance.value / 1000;
   const timeValue = distanceAndTime.duration.value/60; // in minutes
 
   const fare = {
     car:
-      baseFare.car +
+      Math.round(baseFare.car +
       distanceValue * perKmRate.car +
-      timeValue * perMinuteRate.car,
+      timeValue * perMinuteRate.car),
     bike:
-      baseFare.bike +
+      Math.round(baseFare.bike +
       distanceValue * perKmRate.bike +
-      timeValue * perMinuteRate.bike,
+      timeValue * perMinuteRate.bike),
     bicycle:
-      baseFare.bicycle +
+      Math.round(baseFare.bicycle +
       distanceValue * perKmRate.bicycle +
-      timeValue * perMinuteRate.bicycle,
+      timeValue * perMinuteRate.bicycle),
   };
 
   return fare;
 }
 
+module.exports.getFair = getFair; 
 
 // generate otp function here
 function getOtp(num){

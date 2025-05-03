@@ -1,3 +1,4 @@
+import { _round } from "gsap/gsap-core";
 import React from "react";
 
 const VehiclePanel = (props) => {
@@ -16,6 +17,7 @@ const VehiclePanel = (props) => {
       <div
         onClick={() => {
           props.setConfirmedVehiclePanel(true);
+          props.selectVehicle("car");
         }}
         className="flex border-2 shadow border-white active:border-black mb-4 rounded-xl w-full p-3 items-center justify-between"
       >
@@ -41,13 +43,14 @@ const VehiclePanel = (props) => {
           <h5 className="text-sm font-medium">2 Mins away</h5>
           <p className="text-xs font-medium">Affodable, Compact rides</p>
         </div>
-        <h2 className="text-lg font-bold">₹193.20</h2>
+        <h2 className="text-lg font-bold">₹{props.fair.car}</h2>
       </div>
 
       <div
         onClick={() => {
           props.setConfirmedVehiclePanel(true);
           props.setvehiclePanel(false);
+          props.selectVehicle('bike');
         }}
         className="flex border-2 shadow border-white active:border-black mb-4 rounded-xl w-full p-3 items-center justify-between"
       >
@@ -67,13 +70,14 @@ const VehiclePanel = (props) => {
           <h5 className="text-sm font-medium">2 Mins away</h5>
           <p className="text-xs font-medium">Affodable, Bike rides</p>
         </div>
-        <h2 className="text-lg font-bold">₹87.20</h2>
+        <h2 className="text-lg font-bold">₹{props.fair.bike}</h2>
       </div>
 
       <div
         onClick={() => {
           props.setConfirmedVehiclePanel(true);
           props.setvehiclePanel(false);
+          props.selectVehicle('bicycle');
         }}
         className="flex border-2 shadow border-white active:border-black mb-4 rounded-xl w-full p-2 items-center justify-between"
       >
@@ -93,7 +97,7 @@ const VehiclePanel = (props) => {
           <h5 className="text-sm font-medium">2 Mins away</h5>
           <p className="text-xs font-medium">Affodable, Bicycle rides</p>
         </div>
-        <h2 className="text-lg font-bold">₹56.60</h2>
+        <h2 className="text-lg font-bold">₹{(props.fair.bicycle)}</h2>
       </div>
     </div>
   );

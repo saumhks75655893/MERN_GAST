@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CaptainDataContext } from "../context/CaptainContext";
 
-
 const CaptainLogin = () => {
   //for two way binding of input field
   const [email, setEmail] = useState("");
@@ -19,31 +18,35 @@ const CaptainLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const captainData = ({
+    const captainData = {
       email: email,
       password: password,
-    });
+    };
 
-    try{
+    try {
       // Check if the email and password are empty
       if (!email || !password) {
         alert("Please fill in all fields.");
         return;
       }
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/login`, captainData); 
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captainData
+      );
 
-    if (response.status === 200) {
-      const data = response.data;
-      setCaptain(data.captain); // Set the captain data in context
-      localStorage.setItem("captainToken", data.token); // Store the token in local storage
+      if (response.status === 200) {
+        const data = response.data;
+        setCaptain(data.captain); // Set the captain data in context
+        localStorage.setItem("captainToken", data.token); // Store the token in local storage
+        localStorage.setItem("captainData", JSON.stringify(data.captain)); // <-- match this key
+        setCaptain(data.captain);
 
         navigate("/captainhome"); // Redirect to captain home page
       }
-    }catch(error){
+    } catch (error) {
       console.error("Login failed:", error);
       alert("Login failed. Please check your credentials.");
     }
-
 
     setEmail("");
     setPassword("");

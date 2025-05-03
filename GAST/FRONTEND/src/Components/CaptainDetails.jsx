@@ -1,6 +1,13 @@
-import React from "react";
+import React, {useContext, useState} from "react";
+import {CaptainDataContext} from "../context/CaptainContext"
 
 const CaptainDetails = () => {
+
+  const {captain} = useContext(CaptainDataContext);
+
+  if(!captain) return <div>Loading...</div>;
+
+  console.log(captain); 
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -9,7 +16,7 @@ const CaptainDetails = () => {
             className="h-20 border-gray-100 rounded-full p-4"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnY8k4uXKv429FJkjP00thphr81cWXccfeNg&s"
           ></img>
-          <h2 className="text-xl font-semibold">Raghav Raj</h2>
+          <h2 className="text-xl font-semibold">{captain.fullname?.firstname + " " + captain.fullname?.lastname}</h2>
         </div>
         <div className="flex flex-col text-right ">
           <h4 className="text-2xl font-semibold -mt-1 -mb-1">₹245.90</h4>

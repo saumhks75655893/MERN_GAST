@@ -36,13 +36,17 @@ const Userlogin = () => {
     if (response.status === 200) {
       const data = response.data;
 
+      console.log(data); 
       setUser(data.user); // set user data in context
       localStorage.setItem("userToken", data.token); // store user data in local storage
-      navigate("/home"); // redirect to dashboard after login
-    }
+      localStorage.setItem("userData", JSON.stringify(data.user)); // ✅ add this line
 
+      navigate("/home"); // redirect to dashboard after login
+    } 
     setEmail("");
     setPassword("");
+
+
   };
 
   //returning the JSX

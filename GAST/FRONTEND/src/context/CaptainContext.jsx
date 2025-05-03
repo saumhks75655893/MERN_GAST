@@ -1,28 +1,20 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const CaptainDataContext = createContext();
 
 const CaptainContext = ({ children }) => {
   const [captain, setCaptain] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [error, setError] = useState(null); // Error state
 
-  const updateCaptain = (captainData) => {
-    setCaptain(captainData);
-  };
-
-  const value = {
-    captain,
-    setCaptain,
-    isLoading,
-    setIsLoading,
-    error,
-    setError,
-    updateCaptain,
-  };
+  useEffect(() => {
+    const storedCaptain = localStorage.getItem("captainData");
+    if (storedCaptain) {
+      console.log("Hydrating captain from localStorage:", storedCaptain); // debug
+      setCaptain(JSON.parse(storedCaptain));
+    }
+  }, []);
 
   return (
-    <CaptainDataContext.Provider value={value}>
+    <CaptainDataContext.Provider value={{ captain, setCaptain }}>
       {children}
     </CaptainDataContext.Provider>
   );

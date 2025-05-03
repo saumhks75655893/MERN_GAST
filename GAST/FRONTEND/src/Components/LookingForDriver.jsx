@@ -7,7 +7,6 @@ const LookingForDriver = (props) => {
         onClick={() => {
           // props.setvehiclePanel(true);
           props.setConfirmedVehiclePanel(true);
-          // props.setPanelOpen(false);
           props.setVehicleFound(false)
         }}
         className="text-center p-2 text-gray-200 text-3xl"
@@ -28,7 +27,7 @@ const LookingForDriver = (props) => {
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                Kankariya Talab, Bhopal
+               {props.pickup}
               </p>
             </div>
           </div>
@@ -38,7 +37,7 @@ const LookingForDriver = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-user-location-line"></i>
             <div>
-              <h3 className="text-lg font-medium">12A, NEWAR KUMAR'S COFFEE</h3>
+              <h3 className="text-lg font-medium">{props.destination}</h3>
               <p className="text-sm -mt-1 text-gray-600">
                 BHOPAL INTERNATION SCHOOL, BHOPAL
               </p>
@@ -51,7 +50,7 @@ const LookingForDriver = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-bank-card-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">₹196.20</h3>
+              <h3 className="text-lg font-medium">₹{props.fair[props.vehicleType]}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
             </div>
           </div>
