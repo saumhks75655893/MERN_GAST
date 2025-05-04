@@ -15,8 +15,8 @@ const WaitForDriverResponse = (props) => {
       <div className="flex items-center justify-around">
         <img className="h-30 border-gray-100 rounded-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnY8k4uXKv429FJkjP00thphr81cWXccfeNg&s"></img>
         <div className="flex flex-col text-right ">
-          <h2 className="text-lg font-medium">Raghav Raj</h2>
-          <h4 className="text-2xl font-bold -mt-1 -mb-1">UP 65 AN 1929</h4>
+          <h2 className="text-lg font-medium">{props.ride?.captain.fullname.firstname}</h2>
+          <h4 className="text-2xl font-bold -mt-1 -mb-1">{props.ride?.captain.vehicle.plate}</h4>
           <p className="text-base font-medium text-gray-500"> Maruti Suzuki Alto</p>
         </div>
       </div>
@@ -31,7 +31,7 @@ const WaitForDriverResponse = (props) => {
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                Kankariya Talab, Bhopal
+               {props.ride?.pickup}
               </p>
             </div>
           </div>
@@ -43,7 +43,7 @@ const WaitForDriverResponse = (props) => {
             <div>
               <h3 className="text-lg font-medium">12A, NEWAR KUMAR'S COFFEE</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                BHOPAL INTERNATION SCHOOL, BHOPAL
+                {props.ride?.destination}
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ const WaitForDriverResponse = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-bank-card-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">₹196.20</h3>
+              <h3 className="text-lg font-medium">₹{props.ride?.fare}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
             </div>
           </div>

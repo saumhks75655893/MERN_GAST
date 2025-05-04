@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const rideSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: true,
   },
   captain: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Captain",
+    ref: "captain",
   },
   pickup: {
     type: String,
@@ -24,8 +24,8 @@ const rideSchema = new mongoose.Schema({
   },
   status:{
     type: String,
-    enum: ["Pending", "Confirmed","Ongoing", "Canceled", "Completed"],
-    default: "Pending"
+    enum: ["pending", "confirmed","ongoing", "canceled", "completed"],
+    default: "pending"
   }, 
   duration:{
     type: Number,

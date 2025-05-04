@@ -34,9 +34,13 @@ const Home = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [fair, setFair] = useState({});
   const [vehicleType, setvehicleType] = useState(null);
+  const [ride, setRide] = useState(null);
+
 
   const { sendMessage, receiveMessage } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
+  const {socket} = useContext(SocketContext);
+
 
   useEffect(() => {
     if (!user || !user._id) return;
@@ -44,6 +48,23 @@ const Home = () => {
     sendMessage("join", { userType: "user", userId: user._id });
     console.log(user._id); 
   }, [user]);
+
+//confirm ride message 
+useEffect(() => {
+  if (!socket) return;
+  
+  const confirmRideHandler = (data) => {
+    console.log("confirmRide: ", data);
+    setVehicleFound(false);
+    setwaitingForDriver(true);
+    setRide(data); // update ride from the socket data
+  };
+
+  socket.on("confirmRide", confirmRideHandler);
+  return () => {
+    socket.off("confirmRide", confirmRideHandler);
+  };
+}, [socket]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -188,8 +209,8 @@ const Home = () => {
           },
         }
       );
-      // setVehiclePanel(false);
-      // setConfirmedVehiclePanel(true);
+      setvehiclePanel(false);
+      setConfirmedVehiclePanel(true);
       console.log(response.data);
     } catch (error) {
       console.error("Error creating ride:", error);
@@ -326,7 +347,11 @@ const Home = () => {
         ref={waitingForDriverRef}
         className="fixed w-full z-10 bg-white px-3 py-2 bottom-0"
       >
-        <WaitForDriverResponse waitingForDriver={waitingForDriver} />
+        <WaitForDriverResponse 
+        ride={ride}
+        setVehicleFound={setVehicleFound}
+        setwaitingForDriver={setwaitingForDriver}
+        waitingForDriver={waitingForDriver} />
       </div>
     </div>
   );

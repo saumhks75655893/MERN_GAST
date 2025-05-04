@@ -22,6 +22,10 @@ router.get('/get-fair',
   rideController.getFair
 )
 
-
+router.post('/confirm',
+    authMiddleware.authCaptain,
+    body('rideId').isMongoId().withMessage('Invalid ride ID'),
+    rideController.confirmRide
+)
 
 module.exports = router;

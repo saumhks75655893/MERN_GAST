@@ -23,7 +23,7 @@ const RidePopUp = (props) => {
             className="h-25 border-gray-100 rounded-full p-4"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQqsaBK2hz-19t1HQnwjqPxgADLONZdFH3fg&s"
           ></img>
-          <h2 className="text-xl font-semibold">Rina Kumari</h2>
+          <h2 className="text-xl font-semibold">{props.ride?.user.fullname.firstname + " " +props.ride?.user.fullname.firstname }</h2>
         </div>
         <h4 className="text-xl font-bold -mt-1 -mb-1">2.2 KM</h4>
       </div>
@@ -34,9 +34,7 @@ const RidePopUp = (props) => {
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Kankariya Talab, Bhopal
-              </p>
+              <p className="text-sm -mt-1 text-gray-600">{props.ride?.pickup}</p>
             </div>
           </div>
         </div>
@@ -45,7 +43,7 @@ const RidePopUp = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-user-location-line"></i>
             <div>
-              <h3 className="text-lg font-medium">12A, NEWAR KUMAR'S COFFEE</h3>
+              <h3 className="text-lg font-medium">{props.ride?.destination}</h3>
               <p className="text-sm -mt-1 text-gray-600">
                 BHOPAL INTERNATION SCHOOL, BHOPAL
               </p>
@@ -58,7 +56,7 @@ const RidePopUp = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-bank-card-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">₹196.20</h3>
+              <h3 className="text-lg font-medium">₹{props.ride?.fare}</h3>
               <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
             </div>
           </div>
@@ -70,6 +68,7 @@ const RidePopUp = (props) => {
             onClick={() => {
               props.setRidePopPanel(false);
               props.setConfirmRidePopPanel(true);
+              props.confirmRide(); 
             }}
             className="shadow w-1/2 text-white border-green-500 bg-green-500 text-xl font-bold p-3 rounded-lg mb-1"
           >

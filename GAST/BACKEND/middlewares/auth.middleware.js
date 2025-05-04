@@ -67,7 +67,8 @@ module.exports.authCaptain = async (req, res, next) => {
     // if captain found
     req.captain = captain;
     return next();
-  } catch (err) {
+  } catch (error) {
+    console.log(error); 
     // if any error occured during the token verification
     return res.status(401).json({ message: "unauthorized" });
   }

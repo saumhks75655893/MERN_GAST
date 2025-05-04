@@ -8,11 +8,12 @@ import CaptainSignup from "./pages/CaptainSignup";
 import Home from "./pages/Home";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserLogout from "./pages/userLogout";
-import CaptainHome from "./pages/captainHome";
 import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 import CaptainLogout from "./pages/CaptainLogout";
 import Riding from "./pages/Riding";
 import CaptainRiding from "./pages/CaptainRiding";
+import CaptainHome from "./pages/CaptainHome";
+import { SocketProvider } from "./context/SocketContext";
 
 const App = () => {
   return (
@@ -60,9 +61,11 @@ const App = () => {
         <Route
           path="/captainhome"
           element={
-            <CaptainProtectWrapper>
-              <CaptainHome />
-            </CaptainProtectWrapper>
+            <SocketProvider>
+              <CaptainProtectWrapper>
+                <CaptainHome />
+              </CaptainProtectWrapper>
+            </SocketProvider>
           }
         />
 
@@ -77,9 +80,7 @@ const App = () => {
         />
 
         {/* router path to go to the captain riding page after confirming the ride */}
-        <Route path="/CaptainRide" element={
-          <CaptainRiding />
-        }></Route>
+        <Route path="/CaptainRide" element={<CaptainRiding />}></Route>
       </Routes>
     </div>
   );

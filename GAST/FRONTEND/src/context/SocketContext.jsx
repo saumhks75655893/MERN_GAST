@@ -1,38 +1,29 @@
-import React, { createContext, useEffect } from "react";
-import {io} from 'socket.io-client'; 
+import { createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 export const SocketContext = createContext();
 
-const socket = io(`${import.meta.env.VITE_BASE_URL}`); 
-
-const SocketProvider = ({ children }) => {
+export const SocketProvider = ({ children }) => {
+  const [socket, setSocket] = useState();
 
   useEffect(() => {
+    const newSocket = io(`${import.meta.env.VITE_BASE_URL}`); // or your backend devtunnel URL
+    setSocket(newSocket);
 
-    socket.on('connect', () => {
-      console.log('Connected to the server');
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnected from the server');
-    });
-
+    return () => newSocket.disconnect();
   }, []);
 
-  const sendMessage = (eventName,message) => {
-    socket.emit(eventName, message);
-  }
+  const sendMessage = (event, data) => {
+    if (socket) socket.emit(event, data);
+  };
 
-  const receiveMessage = (eventName, callback) => {
-    socket.on(eventName, callback);
-  }
+  const receiveMessage = (event, callback) => {
+    if (socket) socket.on(event, callback);
+  };
 
   return (
-    <SocketContext.Provider value={{ sendMessage, receiveMessage }}>
+    <SocketContext.Provider value={{ socket, sendMessage, receiveMessage }}>
       {children}
     </SocketContext.Provider>
   );
-
-}
-
-export default SocketProvider;
+};

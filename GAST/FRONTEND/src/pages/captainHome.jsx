@@ -8,21 +8,106 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SocketContext } from "../context/SocketContext";
 import { CaptainDataContext } from "../context/CaptainContext";
+import axios from "axios";
 
 const CaptainHome = () => {
-  const [ridePopPanel, setRidePopPanel] = useState(true);
+  const [ridePopPanel, setRidePopPanel] = useState(false);
   const ridePopPanelRef = useRef(null);
+
   const [ConfirmRidePopPanel, setConfirmRidePopPanel] = useState(false);
   const ConfirmRidePopPanelRef = useRef(null);
+
   const { sendMessage, receiveMessage } = useContext(SocketContext);
   const { captain } = useContext(CaptainDataContext);
+  const { socket } = useContext(SocketContext);
+
+  const [ride, setRide] = useState(null)
+
+
 
   useEffect(() => {
-    if (!captain || !captain._id) return;
-    // console.log(user);
+    console.log("Effect triggered. Captain:", captain, "Socket:", socket);
+    if (!captain || !captain._id || !socket) return;
+
     sendMessage("join", { userType: "captain", userId: captain._id });
-    console.log(captain._id);
-  }, [captain]);
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log({
+              userId: captain._id,
+              location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              },
+            });
+
+            socket.emit("update-location-captain", {
+              userId: captain._id,
+              location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              },
+            });
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+          }
+        );
+      } else {
+        console.warn("Geolocation not supported.");
+      }
+    };
+
+    const locationInterval = setInterval(updateLocation, 10000);
+    updateLocation();
+  }, [captain, socket]);
+
+
+
+  // for showing the ride popup
+  if (socket) {
+    socket.on("newRide", (data) => {
+      console.log("New ride received:", data);
+      setRide(data); 
+      setRidePopPanel(true);
+    });
+  }
+
+
+
+// ride popup confirmRide 
+async function confirmRide() {
+  try {
+    const token = localStorage.getItem("captainToken");
+
+    console.log(token)
+    if (!token || !ride || !ride._id || !captain || !captain._id) {
+      console.error("Missing required data for confirming ride.");
+      return;
+    }
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/rides/confirm`,
+      {
+        rideId: ride._id,
+        captainId: captain._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Ride confirmed:", response.data);
+    setRidePopPanel(false);
+    setConfirmRidePopPanel(true);
+  } catch (error) {
+    console.error("Failed to confirm ride:", error);
+  }
+}
 
   // for ignore
   useGSAP(() => {
@@ -49,6 +134,12 @@ const CaptainHome = () => {
       });
     }
   }, [ConfirmRidePopPanel]);
+
+
+
+
+
+
   return (
     <div className="flex flex-col justify-between w-screen h-screen">
       {/* for the upper portion of the captain */}
@@ -83,8 +174,10 @@ const CaptainHome = () => {
         className="fixed w-full z-10 translate-y-full bg-white px-3 py-2 bottom-0"
       >
         <RidePopUp
+          ride={ride}
           setRidePopPanel={setRidePopPanel}
           setConfirmRidePopPanel={setConfirmRidePopPanel}
+          confirmRide= {confirmRide}
         />
       </div>
 
