@@ -1,6 +1,7 @@
 const rideModel = require("../models/rides.model");
 const mapService = require("../services/maps.service");
 const crypto = require("crypto");
+const { sendMessageToSocketId } = require("../socket");
 
 // fare calculation function
 async function getFair(pickup, destination) {
@@ -87,7 +88,7 @@ module.exports.createRide = async ({
 };
 
 // ✅ Change it to:
-module.exports.confirmRide = async ({rideId, captain}) => {
+module.exports.confirmRide = async ({ rideId, captain }) => {
   console.log("Ride ID:", rideId);
   console.log("Captain ID:", captain._id);
 
@@ -95,21 +96,73 @@ module.exports.confirmRide = async ({rideId, captain}) => {
     throw new Error("Ride ID is required!");
   }
 
-  const updatedRide = await rideModel.findOneAndUpdate(
-    { _id: rideId },
-    {
-      status: "Confirmed",
-      captain: captain._id,
-    },
-    { new: true }
-  );
+  await rideModel.findByIdAndUpdate({
+    _id:rideId, 
+  },{
+    status: "accepted",
+    captain:captain._id,
+  })
 
-  if (!updatedRide) {
+  const ride = await rideModel.findOne({
+    _id: rideId,
+  })
+  .populate("user")
+  .populate("captain")
+  .select("+otp");
+
+  
+  sendMessageToSocketId(ride.captain.socketId, {
+    event: "rideConfirmed",
+    data: ride,
+  });
+
+  return ride; 
+  if (!ride) {
     throw new Error("Ride not found!");
   }
 
-  const populatedRide = await rideModel
-    .findById(updatedRide._id)
-    .populate("user").populate("captain");
-  return populatedRide;
+};
+
+module.exports.startRide = async ({ rideId, otp, captain }) => {
+  console.log("Ride ID:", rideId);
+
+  if (!rideId || !otp) {
+    throw new Error("All fields are required!");
+  }
+
+  const ride = await rideModel
+    .fineOne({
+      _id: rideId,
+    })
+    .populate("user")
+    .populate("captain")
+    .select("+otp");
+
+  if (!ride) {
+    throw new Error("Ride not found!");
+  }
+
+  if (ride.status !== "accepted") {
+    throw new Error("Ride status is not accepted!");
+  }
+
+  if (ride.otp !== otp) {
+    throw new Error("Invalid OTP!");
+  }
+
+  await rideModel.findOneAndUpdate(
+    {
+      _id: rideId,
+    },
+    {
+      status: "ongoing",
+    }
+  );
+
+  sendMessageToSocketId(ride.user.socketId, {
+    event: "rideStarted",
+    data: ride,
+  });
+
+  return ride;
 };

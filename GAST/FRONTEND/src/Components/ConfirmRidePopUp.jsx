@@ -1,50 +1,57 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 
-const ConfirmRidePopUp = (props) => {
+const ConfirmRidePopUp = ({
+  ride,
+  setRidePopPanel,
+  setConfirmRidePopPanel,
+  confirmRide,
+}) => {
+  const [otp, setOtp] = useState("");
 
-  const [Otp, setOtp] = useState(''); 
   const submitHandler = (e) => {
-    e.prevenDefault()
+    e.preventDefault();
+    confirmRide(otp); // Call confirmRide with OTP
+  };
 
-  }
+  if (!ride) return null;
+
   return (
-    <div className="">
-      {/* pop-out the window */}
+    <div>
       <h5
         onClick={() => {
-          props.setRidePopPanel(true);
-          props.setConfirmRidePopPanel(false);
+          setRidePopPanel(true);
+          setConfirmRidePopPanel(false);
         }}
         className="text-center p-2 text-gray-200 text-3xl"
       >
         <i className="ri-arrow-down-wide-fill"></i>
       </h5>
 
-      {/* Info about the new ride */}
-      <h3 className="text-2xl font-bold mb-4"> Confirm The Ride To Start! </h3>
+      <h3 className="text-2xl font-bold mb-4">Confirm The Ride To Start!</h3>
 
-      {/* info about the captain and the amount and the distance */}
       <div className="px-3 py-1 bg-yellow-400 rounded-lg flex justify-between items-center">
         <div className="flex items-center justify-center gap-2">
           <img
             className="h-25 border-gray-100 rounded-full p-4"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQqsaBK2hz-19t1HQnwjqPxgADLONZdFH3fg&s"
-          ></img>
-          <h2 className="text-xl font-semibold">Rina Kumari</h2>
+            alt="User"
+          />
+          <h2 className="text-xl font-semibold">
+            {ride.user?.fullname?.firstname} {ride.user?.fullname?.lastname}
+          </h2>
         </div>
-        <h4 className="text-xl font-bold -mt-1 -mb-1">2.2 KM</h4>
+        <h4 className="text-xl font-bold -mt-1 -mb-1">
+          {ride.distance || "N/A"} KM
+        </h4>
       </div>
+
       <div className="flex flex-col gap-2 justify-between items-center mt-5">
-        {/* location for the ride */}
         <div className="w-full my-3 px-4 shadow py-2">
           <div className="flex items-center gap-5">
             <i className="text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">562/11-A</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                Kankariya Talab, Bhopal
-              </p>
+              <h3 className="text-lg font-medium">Pickup</h3>
+              <p className="text-sm -mt-1 text-gray-600">{ride.pickup}</p>
             </div>
           </div>
         </div>
@@ -53,61 +60,44 @@ const ConfirmRidePopUp = (props) => {
           <div className="flex items-center gap-5">
             <i className="text-lg ri-user-location-line"></i>
             <div>
-              <h3 className="text-lg font-medium">12A, NEWAR KUMAR'S COFFEE</h3>
-              <p className="text-sm -mt-1 text-gray-600">
-                BHOPAL INTERNATION SCHOOL, BHOPAL
-              </p>
+              <h3 className="text-lg font-medium">Destination</h3>
+              <p className="text-sm -mt-1 text-gray-600">{ride.destination}</p>
             </div>
           </div>
         </div>
 
-        {/* Amount for the ride */}
         <div className="w-full mb-3 px-4 shadow py-2">
           <div className="flex items-center gap-5">
             <i className="text-lg ri-bank-card-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">₹196.20</h3>
-              <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
+              <h3 className="text-lg font-medium">₹{ride.fare}</h3>
+              <p className="text-sm -mt-1 text-gray-600">Cash</p>
             </div>
           </div>
         </div>
 
-        {/* form for the submit otp and confirm ride */}
         <div className="w-full mt-6">
-          <form
-            onSubmit={(e) => {
-              submitHandler(e);
-            }}
-          >
+          <form onSubmit={submitHandler}>
             <input
-            value={Otp}
-            onChange={(e) => setOtp(e.target.value)}
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
               type="text"
               className="bg-[#eee] px-6 font-mono py-4 w-full text-lg rounded-lg mb-6"
-              placeholder="Enter Otp"
-            ></input>
+              placeholder="Enter OTP"
+            />
 
             <div className="w-full flex flex-row-reverse items-center justify-between gap-2">
-              {" "}
-              {/* button for confirm the ride */}
-              <Link
-                to="/CaptainRide"
-                onClick={() => {
-                  props.setRidePopPanel(false);
-                  props.setConfirmRidePopPanel(true);
-                }}
+              <button
+                type="submit"
                 className="flex justify-center w-1/2 shadow text-white border-green-500 bg-green-500 text-xl font-bold p-4 rounded-lg mb-1"
               >
                 Confirm
-              </Link>
-              {/* button for cancle the ride */}
+              </button>
               <button
-                onClick={() => {
-                  props.setConfirmRidePopPanel(false);
-                }}
+                onClick={() => setConfirmRidePopPanel(false)}
                 className="w-1/2 shadow text-white p-4 bg-red-500 text-xl font-bold rounded-lg"
               >
-                Cancle
+                Cancel
               </button>
             </div>
           </form>
